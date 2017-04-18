@@ -42,7 +42,7 @@ You should create one R script called run_analysis.R that does the following:
 *Good luck!*
 
 # Dataset Creation
->Please refer to run_analysis.html for detailed explanation as to how the data was downloaded, gathered, narrowed, and cleaned.
+>Please refer to run_analysis.md for detailed explanations as to how the data was downloaded, gathered, narrowed, and cleaned.
 
 # Variables
 ```{r}
