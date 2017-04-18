@@ -51,9 +51,14 @@ sapply(packages, require, character.only = TRUE, quietly = TRUE)
 getwd()
 setwd("/Users/Jostein/Projects/datasciencecoursera/data-cleaning")
 path <- getwd()
-urlFile = "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
-download(urlFile, dest = "/Users/Jostein/Projects/datasciencecoursera/data-cleaning/data-set.zip", mode ="wb")
-unzip("data-set.zip", exdir = "./")
+fileName <- "data-set.zip"
+if (!file.exists(fileName)) {
+	urlFile = "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
+	download(urlFile, dest = "/Users/Jostein/Projects/datasciencecoursera/data-cleaning/data-set.zip", mode ="wb")
+}
+if (!file.exists("UCI HAR Dataset")) {
+	unzip("data-set.zip", exdir = "./")
+}
 ```
 
 # Create the test data frame
@@ -97,7 +102,9 @@ run$activity_labels <- as.character(activityLabels[match(run$activity_labels, ac
 ```{r}
 setnames(run, colnames(run), gsub("\\(\\)", "", colnames(run)))
 setnames(run, colnames(run), gsub("-", "_", colnames(run)))
-setnames(run, colnames(run), gsub("BodyBody", "Body", colnames(run)))
+setnames(run, colnames(run), gsub("[.]", "", colnames(run)))
+setnames(run, colnames(run), gsub("mean", "Mean", colnames(run)))
+setnames(run, colnames(run), gsub("std", "Std", colnames(run)))
 ```
 # Create the second, tidy data set
 ## and write it to an appropriately named file
@@ -105,7 +112,14 @@ setnames(run, colnames(run), gsub("BodyBody", "Body", colnames(run)))
 summaryRun <- group_by(run, subject_id, activity_labels)
 summarise_each(summaryRun, funs(mean))
 write.table(summaryRun, file = "summary_run_data.txt", row.names = FALSE)
+#write.table(summarise_each(summaryRun, funs(mean)), file = "summary_run_data.txt", row.names = FALSE)
 ```
+
+# Export variable names for codebook
+```{r}
+write.csv(names(summaryRun), file = "variable_names_codebook.csv", row.names = FALSE, col.names = FALSE)
+```
+
 
 # Create codebook convert to HTML
 ```{r}

@@ -276,9 +276,14 @@ sapply(packages, require, character.only = TRUE, quietly = TRUE)
 
 <pre><code class="r">setwd(&quot;/Users/Jostein/Projects/datasciencecoursera/data-cleaning&quot;)
 path &lt;- getwd()
-urlFile = &quot;https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip&quot;
-download(urlFile, dest = &quot;/Users/Jostein/Projects/datasciencecoursera/data-cleaning/data-set.zip&quot;, mode =&quot;wb&quot;)
-unzip(&quot;data-set.zip&quot;, exdir = &quot;./&quot;)
+fileName &lt;- &quot;data-set.zip&quot;
+if (!file.exists(fileName)) {
+    urlFile = &quot;https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip&quot;
+    download(urlFile, dest = &quot;/Users/Jostein/Projects/datasciencecoursera/data-cleaning/data-set.zip&quot;, mode =&quot;wb&quot;)
+}
+if (!file.exists(&quot;UCI HAR Dataset&quot;)) {
+    unzip(&quot;data-set.zip&quot;, exdir = &quot;./&quot;)
+}
 </code></pre>
 
 <h1>Create the test data frame</h1>
@@ -322,7 +327,9 @@ run$activity_labels &lt;- as.character(activityLabels[match(run$activity_labels,
 
 <pre><code class="r">setnames(run, colnames(run), gsub(&quot;\\(\\)&quot;, &quot;&quot;, colnames(run)))
 setnames(run, colnames(run), gsub(&quot;-&quot;, &quot;_&quot;, colnames(run)))
-setnames(run, colnames(run), gsub(&quot;BodyBody&quot;, &quot;Body&quot;, colnames(run)))
+setnames(run, colnames(run), gsub(&quot;[.]&quot;, &quot;&quot;, colnames(run)))
+setnames(run, colnames(run), gsub(&quot;mean&quot;, &quot;Mean&quot;, colnames(run)))
+setnames(run, colnames(run), gsub(&quot;std&quot;, &quot;Std&quot;, colnames(run)))
 </code></pre>
 
 <h1>Create the second, tidy data set</h1>
@@ -336,54 +343,58 @@ summarise_each(summaryRun, funs(mean))
 <pre><code>## Source: local data frame [180 x 68]
 ## Groups: subject_id [?]
 ## 
-##    subject_id    activity_labels tBodyAcc.mean...X tBodyAcc.mean...Y
-##         &lt;int&gt;              &lt;chr&gt;             &lt;dbl&gt;             &lt;dbl&gt;
-## 1           1             LAYING         0.2215982      -0.040513953
-## 2           1            SITTING         0.2612376      -0.001308288
-## 3           1           STANDING         0.2789176      -0.016137590
-## 4           1            WALKING         0.2773308      -0.017383819
-## 5           1 WALKING_DOWNSTAIRS         0.2891883      -0.009918505
-## 6           1   WALKING_UPSTAIRS         0.2554617      -0.023953149
-## 7           2             LAYING         0.2813734      -0.018158740
-## 8           2            SITTING         0.2770874      -0.015687994
-## 9           2           STANDING         0.2779115      -0.018420827
-## 10          2            WALKING         0.2764266      -0.018594920
-## # ... with 170 more rows, and 64 more variables: tBodyAcc.mean...Z &lt;dbl&gt;,
-## #   tGravityAcc.mean...X &lt;dbl&gt;, tGravityAcc.mean...Y &lt;dbl&gt;,
-## #   tGravityAcc.mean...Z &lt;dbl&gt;, tBodyAccJerk.mean...X &lt;dbl&gt;,
-## #   tBodyAccJerk.mean...Y &lt;dbl&gt;, tBodyAccJerk.mean...Z &lt;dbl&gt;,
-## #   tBodyGyro.mean...X &lt;dbl&gt;, tBodyGyro.mean...Y &lt;dbl&gt;,
-## #   tBodyGyro.mean...Z &lt;dbl&gt;, tBodyGyroJerk.mean...X &lt;dbl&gt;,
-## #   tBodyGyroJerk.mean...Y &lt;dbl&gt;, tBodyGyroJerk.mean...Z &lt;dbl&gt;,
-## #   tBodyAccMag.mean.. &lt;dbl&gt;, tGravityAccMag.mean.. &lt;dbl&gt;,
-## #   tBodyAccJerkMag.mean.. &lt;dbl&gt;, tBodyGyroMag.mean.. &lt;dbl&gt;,
-## #   tBodyGyroJerkMag.mean.. &lt;dbl&gt;, fBodyAcc.mean...X &lt;dbl&gt;,
-## #   fBodyAcc.mean...Y &lt;dbl&gt;, fBodyAcc.mean...Z &lt;dbl&gt;,
-## #   fBodyAccJerk.mean...X &lt;dbl&gt;, fBodyAccJerk.mean...Y &lt;dbl&gt;,
-## #   fBodyAccJerk.mean...Z &lt;dbl&gt;, fBodyGyro.mean...X &lt;dbl&gt;,
-## #   fBodyGyro.mean...Y &lt;dbl&gt;, fBodyGyro.mean...Z &lt;dbl&gt;,
-## #   fBodyAccMag.mean.. &lt;dbl&gt;, fBodyAccJerkMag.mean.. &lt;dbl&gt;,
-## #   fBodyGyroMag.mean.. &lt;dbl&gt;, fBodyGyroJerkMag.mean.. &lt;dbl&gt;,
-## #   tBodyAcc.std...X &lt;dbl&gt;, tBodyAcc.std...Y &lt;dbl&gt;,
-## #   tBodyAcc.std...Z &lt;dbl&gt;, tGravityAcc.std...X &lt;dbl&gt;,
-## #   tGravityAcc.std...Y &lt;dbl&gt;, tGravityAcc.std...Z &lt;dbl&gt;,
-## #   tBodyAccJerk.std...X &lt;dbl&gt;, tBodyAccJerk.std...Y &lt;dbl&gt;,
-## #   tBodyAccJerk.std...Z &lt;dbl&gt;, tBodyGyro.std...X &lt;dbl&gt;,
-## #   tBodyGyro.std...Y &lt;dbl&gt;, tBodyGyro.std...Z &lt;dbl&gt;,
-## #   tBodyGyroJerk.std...X &lt;dbl&gt;, tBodyGyroJerk.std...Y &lt;dbl&gt;,
-## #   tBodyGyroJerk.std...Z &lt;dbl&gt;, tBodyAccMag.std.. &lt;dbl&gt;,
-## #   tGravityAccMag.std.. &lt;dbl&gt;, tBodyAccJerkMag.std.. &lt;dbl&gt;,
-## #   tBodyGyroMag.std.. &lt;dbl&gt;, tBodyGyroJerkMag.std.. &lt;dbl&gt;,
-## #   fBodyAcc.std...X &lt;dbl&gt;, fBodyAcc.std...Y &lt;dbl&gt;,
-## #   fBodyAcc.std...Z &lt;dbl&gt;, fBodyAccJerk.std...X &lt;dbl&gt;,
-## #   fBodyAccJerk.std...Y &lt;dbl&gt;, fBodyAccJerk.std...Z &lt;dbl&gt;,
-## #   fBodyGyro.std...X &lt;dbl&gt;, fBodyGyro.std...Y &lt;dbl&gt;,
-## #   fBodyGyro.std...Z &lt;dbl&gt;, fBodyAccMag.std.. &lt;dbl&gt;,
-## #   fBodyAccJerkMag.std.. &lt;dbl&gt;, fBodyGyroMag.std.. &lt;dbl&gt;,
-## #   fBodyGyroJerkMag.std.. &lt;dbl&gt;
+##    subject_id    activity_labels tBodyAccMeanX tBodyAccMeanY tBodyAccMeanZ
+##         &lt;int&gt;              &lt;chr&gt;         &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
+## 1           1             LAYING     0.2215982  -0.040513953    -0.1132036
+## 2           1            SITTING     0.2612376  -0.001308288    -0.1045442
+## 3           1           STANDING     0.2789176  -0.016137590    -0.1106018
+## 4           1            WALKING     0.2773308  -0.017383819    -0.1111481
+## 5           1 WALKING_DOWNSTAIRS     0.2891883  -0.009918505    -0.1075662
+## 6           1   WALKING_UPSTAIRS     0.2554617  -0.023953149    -0.0973020
+## 7           2             LAYING     0.2813734  -0.018158740    -0.1072456
+## 8           2            SITTING     0.2770874  -0.015687994    -0.1092183
+## 9           2           STANDING     0.2779115  -0.018420827    -0.1059085
+## 10          2            WALKING     0.2764266  -0.018594920    -0.1055004
+## # ... with 170 more rows, and 63 more variables: tGravityAccMeanX &lt;dbl&gt;,
+## #   tGravityAccMeanY &lt;dbl&gt;, tGravityAccMeanZ &lt;dbl&gt;,
+## #   tBodyAccJerkMeanX &lt;dbl&gt;, tBodyAccJerkMeanY &lt;dbl&gt;,
+## #   tBodyAccJerkMeanZ &lt;dbl&gt;, tBodyGyroMeanX &lt;dbl&gt;, tBodyGyroMeanY &lt;dbl&gt;,
+## #   tBodyGyroMeanZ &lt;dbl&gt;, tBodyGyroJerkMeanX &lt;dbl&gt;,
+## #   tBodyGyroJerkMeanY &lt;dbl&gt;, tBodyGyroJerkMeanZ &lt;dbl&gt;,
+## #   tBodyAccMagMean &lt;dbl&gt;, tGravityAccMagMean &lt;dbl&gt;,
+## #   tBodyAccJerkMagMean &lt;dbl&gt;, tBodyGyroMagMean &lt;dbl&gt;,
+## #   tBodyGyroJerkMagMean &lt;dbl&gt;, fBodyAccMeanX &lt;dbl&gt;, fBodyAccMeanY &lt;dbl&gt;,
+## #   fBodyAccMeanZ &lt;dbl&gt;, fBodyAccJerkMeanX &lt;dbl&gt;, fBodyAccJerkMeanY &lt;dbl&gt;,
+## #   fBodyAccJerkMeanZ &lt;dbl&gt;, fBodyGyroMeanX &lt;dbl&gt;, fBodyGyroMeanY &lt;dbl&gt;,
+## #   fBodyGyroMeanZ &lt;dbl&gt;, fBodyAccMagMean &lt;dbl&gt;,
+## #   fBodyBodyAccJerkMagMean &lt;dbl&gt;, fBodyBodyGyroMagMean &lt;dbl&gt;,
+## #   fBodyBodyGyroJerkMagMean &lt;dbl&gt;, tBodyAccStdX &lt;dbl&gt;,
+## #   tBodyAccStdY &lt;dbl&gt;, tBodyAccStdZ &lt;dbl&gt;, tGravityAccStdX &lt;dbl&gt;,
+## #   tGravityAccStdY &lt;dbl&gt;, tGravityAccStdZ &lt;dbl&gt;, tBodyAccJerkStdX &lt;dbl&gt;,
+## #   tBodyAccJerkStdY &lt;dbl&gt;, tBodyAccJerkStdZ &lt;dbl&gt;, tBodyGyroStdX &lt;dbl&gt;,
+## #   tBodyGyroStdY &lt;dbl&gt;, tBodyGyroStdZ &lt;dbl&gt;, tBodyGyroJerkStdX &lt;dbl&gt;,
+## #   tBodyGyroJerkStdY &lt;dbl&gt;, tBodyGyroJerkStdZ &lt;dbl&gt;,
+## #   tBodyAccMagStd &lt;dbl&gt;, tGravityAccMagStd &lt;dbl&gt;,
+## #   tBodyAccJerkMagStd &lt;dbl&gt;, tBodyGyroMagStd &lt;dbl&gt;,
+## #   tBodyGyroJerkMagStd &lt;dbl&gt;, fBodyAccStdX &lt;dbl&gt;, fBodyAccStdY &lt;dbl&gt;,
+## #   fBodyAccStdZ &lt;dbl&gt;, fBodyAccJerkStdX &lt;dbl&gt;, fBodyAccJerkStdY &lt;dbl&gt;,
+## #   fBodyAccJerkStdZ &lt;dbl&gt;, fBodyGyroStdX &lt;dbl&gt;, fBodyGyroStdY &lt;dbl&gt;,
+## #   fBodyGyroStdZ &lt;dbl&gt;, fBodyAccMagStd &lt;dbl&gt;,
+## #   fBodyBodyAccJerkMagStd &lt;dbl&gt;, fBodyBodyGyroMagStd &lt;dbl&gt;,
+## #   fBodyBodyGyroJerkMagStd &lt;dbl&gt;
 </code></pre>
 
 <pre><code class="r">write.table(summaryRun, file = &quot;summary_run_data.txt&quot;, row.names = FALSE)
+#write.table(summarise_each(summaryRun, funs(mean)), file = &quot;summary_run_data.txt&quot;, row.names = FALSE)
+</code></pre>
+
+<h1>Export variable names for codebook</h1>
+
+<pre><code class="r">write.csv(names(summaryRun), file = &quot;variable_names_codebook.csv&quot;, row.names = FALSE, col.names = FALSE)
+</code></pre>
+
+<pre><code>## Warning in write.csv(names(summaryRun), file =
+## &quot;variable_names_codebook.csv&quot;, : attempt to set &#39;col.names&#39; ignored
 </code></pre>
 
 <h1>Create codebook convert to HTML</h1>
